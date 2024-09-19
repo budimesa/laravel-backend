@@ -11,8 +11,18 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->api(prepend: [
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            \App\Http\Middleware\LogRequests::class, // Middleware baru
+        ]);
+
+        $middleware->alias([
+            'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
+            'role' => \App\Http\Middleware\CheckUserRole::class, // Middleware baru
+        ]);
+
+        // Tambahkan middleware lain jika diperlukan
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        // Konfigurasi penanganan pengecualian jika diperlukan
     })->create();
